@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Esgoto, água e lixo em Sinop (MT): números do município com fonte, e mapa da rede de esgoto por bairro.">
+  <title>Saneamento Sinop | Esgoto, água e lixo em números e no mapa</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    (function () { try { var t = localStorage.getItem("ss_tema"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {} })();
+  </script>
+</head>
+<body>
+  <header class="topo">
+    <div class="wrap">
+      <a class="marca" href="#inicio"><img src="favicon.svg" alt="" width="32" height="32"><span>Saneamento Sinop</span></a>
+      <nav aria-label="Seções">
+        <a href="#panorama">Panorama</a>
+        <a href="#mapa">Mapa da rede</a>
+        <a href="#metas">Metas</a>
+        <a href="#fontes">Fontes</a>
+      </nav>
+      <button class="btn-tema" id="tema" type="button" aria-pressed="false">Escuro</button>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <section class="abertura">
+      <div class="wrap">
+        <h1>Em Sinop, três fontes dão três números diferentes para o esgoto</h1>
+        <p class="texto" id="abertura-texto"></p>
+        <div class="regua-bloco">
+          <h2>Cobertura de esgoto, de 0 a 100%</h2>
+          <p>Cada marca vem de uma fonte e de um jeito de medir. Não formam uma série histórica.</p>
+          <div id="regua"></div>
+          <div class="regua-legenda"><span class="l-dado">Dado publicado</span><span class="l-meta">Meta anunciada pela concessionária</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bloco" id="panorama">
+      <div class="wrap">
+        <h2>Panorama do município</h2>
+        <p class="lide">Os números abaixo foram transcritos das fontes citadas em cada linha. Quando duas fontes medem a mesma coisa de formas diferentes, as duas aparecem.</p>
+        <div class="colunas" id="colunas"></div>
+        <div class="composicao" id="composicao"></div>
+      </div>
+    </section>
+
+    <section class="bloco" id="mapa">
+      <div class="wrap">
+        <h2>Mapa da rede de esgoto por bairro</h2>
+        <p class="lide">Mostra a situação da rede nos bairros citados pelas fontes. Cada ponto marca o bairro, não o seu limite.</p>
+        <p class="aviso-escopo" id="aviso-escopo"></p>
+        <div class="mapa-barra">
+          <div class="seg" id="filtros" role="group" aria-label="Filtrar por situação"></div>
+          <div class="seg" id="base" role="group" aria-label="Tipo de mapa">
+            <button type="button" data-base="osm" aria-pressed="true">Ruas</button>
+            <button type="button" data-base="sat" aria-pressed="false">Satélite</button>
+          </div>
+        </div>
+        <p class="mapa-estado" id="mapa-estado" role="status" aria-live="polite"></p>
+        <div class="progresso" id="progresso" hidden><i id="progresso-barra"></i></div>
+        <div class="ferramentas" id="ferramentas-mapa"></div>
+        <div class="mapa-grade">
+          <div class="mapa-caixa">
+            <div id="mapa-el" aria-label="Mapa de Sinop com a situação da rede de esgoto por bairro"></div>
+            <div class="mapa-falha" id="mapa-falha"><div><strong>O mapa não carregou.</strong><p>Ele precisa de internet para baixar a biblioteca e as imagens. A lista ao lado continua funcionando.</p></div></div>
+            <div class="legenda" id="legenda"></div>
+          </div>
+          <aside class="lateral" aria-label="Lista de bairros">
+            <h3>Bairros</h3>
+            <label class="sr-only" for="busca">Buscar bairro</label>
+            <input class="busca" id="busca" type="search" placeholder="Buscar bairro" autocomplete="off">
+            <p class="contagem" id="contagem"></p>
+            <ul class="lista" id="lista"></ul>
+            <button class="btn sec mais" id="mais" type="button" hidden>Mostrar mais bairros</button>
+            <div class="detalhe" id="detalhe" hidden></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="bloco" id="metas">
+      <div class="wrap">
+        <h2>Metas e o que falta para chegar lá</h2>
+        <p class="lide">As contas abaixo usam apenas números das fontes. Cada uma diz de onde veio.</p>
+        <div class="dois">
+          <ul class="contas" id="contas"></ul>
+          <div id="rede-obras"></div>
+        </div>
+        <div class="cuidados" id="cuidados"></div>
+      </div>
+    </section>
+
+    <section class="bloco" id="fontes">
+      <div class="wrap">
+        <h2>Fontes</h2>
+        <p class="lide">Tudo o que aparece no site vem da planilha do projeto. Cada indicador e cada bairro tem data e link.</p>
+        <ol class="fontes-lista" id="fontes-lista"></ol>
+        <details class="tabela">
+          <summary>Tabela dos 28 indicadores municipais</summary>
+          <div class="rolagem"><table class="fontes"><thead><tr><th>Indicador</th><th>Valor</th><th>Referência</th><th>Fonte</th></tr></thead><tbody id="tabela-indicadores"></tbody></table></div>
+        </details>
+        <div class="baixar" id="downloads"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <div class="wrap">
+      <p><strong>Saneamento Sinop</strong>, projeto escolar. Dados pesquisados e conferidos em 20/10/2026.</p>
+      <p>O site não usa percentuais inventados. Bairro que não aparece no mapa não tem informação nas fontes, e isso não quer dizer que não tenha rede.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="js/dados.js"></script>
+  <script src="js/coordenadas.js"></script>
+  <script src="js/geo.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
